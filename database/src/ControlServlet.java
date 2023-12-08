@@ -26,6 +26,9 @@ public class ControlServlet extends HttpServlet {
 	    private quoteDAO quoteDAO;
 	    private treeDAO treeDAO;
 	    private negotiateQuoteDAO negotiateQuoteDAO;
+	    private orderDAO orderDAO;
+	    private billDAO billDAO;
+	    private negotiateBillDAO negotiateBillDAO;
 	    private String currentUser;
 	    private int currentQuote;
 	    private HttpSession session=null;
@@ -42,6 +45,9 @@ public class ControlServlet extends HttpServlet {
 		    	userDAO = new userDAO(dbConnect.getDbConnection());
 		    	treeDAO = new treeDAO(dbConnect.getDbConnection());
 		    	negotiateQuoteDAO = new negotiateQuoteDAO(dbConnect.getDbConnection());
+		    	orderDAO = new orderDAO(dbConnect.getDbConnection());
+		    	billDAO = new billDAO(dbConnect.getDbConnection());
+		    	negotiateBillDAO = new negotiateBillDAO(dbConnect.getDbConnection());
 		    	currentUser= "";
 		    	currentQuote = 0;
 	    	} catch (SQLException e) {
@@ -69,7 +75,8 @@ public class ControlServlet extends HttpServlet {
         		userDAO.init();
         		quoteDAO.init(); //quote table
         		treeDAO.init(); //tree table
-        		negotiateQuoteDAO.init(); //this one's pretty self explanatory
+        		negotiateQuoteDAO.init();
+        		orderDAO.init();
         		System.out.println("Database successfully initialized!");
         		rootPage(request,response,"initialize");
         		break;
@@ -183,6 +190,8 @@ public class ControlServlet extends HttpServlet {
 			request.setAttribute("listUser", userDAO.listAllUsers());
 			request.setAttribute("listQuote", quoteDAO.listAllQuotes());
 			request.setAttribute("listTree", treeDAO.listAllTrees());
+			//request.setAttribute("listOrder", orderDAO.listAllOrders());
+			
 	    	request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    }
 	    

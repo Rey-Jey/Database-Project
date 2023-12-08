@@ -1,5 +1,6 @@
 public class order 
 {
+		protected int orderID;
 		protected int quoteID;
 		protected int tree_amt;
 	 	protected double price;
@@ -12,30 +13,35 @@ public class order
 	    //constructors
 	    public order() {}
 	 
-	    public order(int quoteID) { this.quoteID = quoteID;}
+	    public order(int orderID) { this.orderID = orderID;}
 	    
-	    public order(String email) {this.email = email; }
-	    
-	    public order(String status, int quoteID) {
-	    	this.status = status;
+	    public order(int quoteID, String email) {
 	    	this.quoteID = quoteID;
+	    	this.email = email;
+	    }
+	    
+	    public order(String status, int orderID) {
+	    	this.status = status;
+	    	this.orderID = orderID;
 	    }
 		    
-	    public order(int quoteID, int tree_amt, double price, String start_time, String end_time, String status, String email) {
-	    	this(tree_amt, price, start_time, end_time, status, email);
-	    	this.quoteID = quoteID;
+	    public order(int orderID, int quoteID, int tree_amt, double price, String start_time, String end_time, String status, String email) {
+	    	this(quoteID, tree_amt, price, start_time, end_time, status, email);
+	    	this.orderID = orderID;
 	    }
 	    
-	    public order(int quoteID, double price, String start_time, String end_time, String status) {
+	    public order(int orderID, int quoteID, double price, String start_time, String end_time, String status) {
 	    	this.price = price;
 	    	this.start_time = start_time;
 	    	this.end_time = end_time;
 	    	this.status = status;
 	    	this.quoteID = quoteID;
+	    	this.orderID = orderID;
 	    }
 	 
 	
-	    public order(int tree_amt, double price, String start_time, String end_time, String status, String email) {
+	    public order(int quoteID, int tree_amt, double price, String start_time, String end_time, String status, String email) {
+	    	this.quoteID = quoteID;
 	    	this.tree_amt = tree_amt;
 	    	this.price = price;
 	    	this.start_time = start_time;
@@ -45,6 +51,10 @@ public class order
 	    }
 	    
 	   //getter and setter methods
+	    public int getOrderID() { return orderID; }
+	    
+	    public void setOrderID(int orderID) { this.orderID = orderID; }
+	    
 	    public int getQuoteID() { return quoteID; }
 	    
 	    public void setQuoteID(int quoteID) { this.quoteID = quoteID; }
