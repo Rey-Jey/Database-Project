@@ -115,9 +115,9 @@ public class orderDAO
     
     public void insertFromQuote(order orders) throws SQLException {
     	            
-		String sql = "insert into Order(quoteID) SELECT * from Quote WHERE quoteID=?";
+		String sql = "insert into qOrder (quoteID, tree_amt, price, email, contractor, start_time, end_time) select quoteID, tree_amt, price, email, contractor, start_time, end_time from Quote where quoteID=?";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);	
-			preparedStatement.setInt(1, orders.getQuoteID());		
+		preparedStatement.setInt(1, orders.getQuoteID());		
 
 
 		preparedStatement.executeUpdate();
@@ -127,7 +127,7 @@ public class orderDAO
     //public void ()
     
     public boolean delete(int orderID) throws SQLException {
-        String sql = "DELETE FROM Order WHERE orderID = ?";        
+        String sql = "DELETE FROM qOrder WHERE orderID = ?";        
         
          
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -139,7 +139,7 @@ public class orderDAO
     }
      
     public boolean update(order orders) throws SQLException {
-        String sql = "update Order set quoteID=?, tree_amt=?, price=?, start_time=?, end_time=?, status=? where quoteID=?";
+        String sql = "update qOrder set quoteID=?, tree_amt=?, price=?, start_time=?, end_time=?, status=? where quoteID=?";
         
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -213,7 +213,7 @@ public class orderDAO
 					        	"contractor VARCHAR(50) DEFAULT 'davidsmith@gmail.com', " +
 					            "start_time DATE DEFAULT '0001-01-01', " +
 					            "end_time DATE DEFAULT '0001-01-01', " +
-					            "status VARCHAR(10) DEFAULT 'Pending', " +
+					            "status VARCHAR(20) DEFAULT 'In Progress', " +
 					            "PRIMARY KEY (orderID), " +
 					            "FOREIGN KEY (quoteID) REFERENCES Quote(quoteID)," +
 					            "FOREIGN KEY (email) REFERENCES User(email)," +

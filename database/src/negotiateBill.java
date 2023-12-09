@@ -1,7 +1,7 @@
 public class negotiateBill 
 {
 		protected int negotiateBID;
-		protected int quoteID;
+		protected int billID;
 	 	protected String email;
 
 	 	protected double price;
@@ -15,14 +15,14 @@ public class negotiateBill
 	 
 	    public negotiateBill(int negotiateBID) { this.negotiateBID = negotiateBID;}
 	    
-	    public negotiateBill(int quoteID, String email, String msg) {
-	    	this.quoteID = quoteID;
+	    public negotiateBill(int billID, String email, String msg) {
+	    	this.billID = billID;
 	    	this.email = email;
 	    	this.msg = msg;
     	}
 	    
-	    public negotiateBill(int negotiateBID, int quoteID, String email, double price, String start_time, String end_time, String msg, String date) {
-	    	this(quoteID, email, price, start_time, end_time, msg);
+	    public negotiateBill(int negotiateBID, int billID, String email, double price, String start_time, String end_time, String msg, String date) {
+	    	this(billID, email, price, start_time, end_time, msg);
 	    	this.negotiateBID = negotiateBID;
 	    	this.date = date;
 	    }
@@ -30,8 +30,8 @@ public class negotiateBill
 	    
 	 
 	
-	    public negotiateBill(int quoteID, String email, double price, String start_time, String end_time, String msg) {
-	    	this.quoteID = quoteID;
+	    public negotiateBill(int billID, String email, double price, String start_time, String end_time, String msg) {
+	    	this.billID = billID;
 	    	this.email = email;
 	    	this.price = price;
 	    	this.start_time = start_time;
@@ -42,13 +42,13 @@ public class negotiateBill
 	    
 	   //getter and setter methods
 	    
-	    public int getNegotiateID() { return negotiateBID;}
+	    public int getNegotiateBID() { return negotiateBID;}
 	    
-	    public void setNegotiateID(int negotiateBID) { this.negotiateBID = negotiateBID; }
+	    public void setNegotiateBID(int negotiateBID) { this.negotiateBID = negotiateBID; }
 	    
-	    public int getQuoteID() { return quoteID;}
+	    public int getBillID() { return billID;}
 	    
-	    public void setQuoteID(int quoteID) { this.quoteID = quoteID; }
+	    public void setBillID(int billID) { this.billID = billID; }
 	    
 	    public double getPrice() { return price; }
 	    

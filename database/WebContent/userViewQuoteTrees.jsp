@@ -5,6 +5,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style type ="text/css">
+	.fieldset-auto-width {
+		display:inline-block;
+	}
+</style>
 <meta charset="ISO-8859-1">
 <title>View Trees in this Quote</title>
 </head>
@@ -21,7 +26,19 @@
 	</form>
 	<br>
 	<form action="finalizeRequest" >
-	<button>Cancel this Request</button>
+	<fieldset class="fieldset-auto-width">
+	<legend>Accept this Request?</legend>
+	<div>
+		<input type = "radio" name="finalReq" value="yes">
+		<label> Yes </label>
+	</div>
+	<div>
+		<input type = "radio" name="finalReq" value="no">
+		<label> No </label>
+	</div>
+	
+	</fieldset>
+	<input type = "submit" value="Submit">
 	</form>
 	
 	<table border="1" cellpadding="6">

@@ -159,6 +159,10 @@ public class ControlServlet extends HttpServlet {
         		System.out.println("Going to finalize this request");
         		reqFinal(request,response);
         		break;
+        		
+        	case "/viewOrdersUser":
+        		System.out.println("Showing orders for this user");
+        		listUserOrders(request, response);
                  
 	    	}
 	    }
@@ -393,6 +397,14 @@ public class ControlServlet extends HttpServlet {
 	    	request.getRequestDispatcher("userViewQuotes.jsp").forward(request, response);
 	    }
 	    
+	    private void listUserOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String email = currentUser;
+	    	
+	    	request.setAttribute("listUserOrder", orderDAO.listUserOrders(email));
+	    	
+	    	request.getRequestDispatcher("userViewOrders.jsp").forward(request, response);
+	    }
+	    
 	    private void msgGoBack(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	String email = currentUser;
 	    	
@@ -465,10 +477,19 @@ public class ControlServlet extends HttpServlet {
 	    
 	    private void reqFinal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	int quoteID = currentQuote;
+	    	//String email = currentUser;
+	    	String choice = request.getParameter("finalReq");
 	    	
-	    	negotiateQuoteDAO.delete(quoteID);
-	    	treeDAO.delete(quoteID);
-	    	quoteDAO.delete(quoteID);
+	    	if (choice == "no") {
+	    		negotiateQuoteDAO.delete(quoteID);
+		    	treeDAO.delete(quoteID);
+		    	quoteDAO.delete(quoteID);
+	    	}
+	    	
+	    	else {
+	    		order orders = new order(quoteID);
+	    		orderDAO.insertFromQuote(orders);
+	    	}
 	    	
 	    	listUserQuotes(request, response);
 	    }

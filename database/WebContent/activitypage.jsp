@@ -26,10 +26,10 @@
 				<input type="submit" value="View all quotes"/>
 
 		</form></br></br>
-		<form action="" method="post">
+		<form action="viewOrdersUser" method="post">
 			<table border="1" cellpadding="5">
 
-				<input type="submit" value="View "/>
+				<input type="submit" value="View all orders"/>
 
 		</form></br></br>
 		 <a href="login.jsp"target ="_self" > logout</a><br><br> 
