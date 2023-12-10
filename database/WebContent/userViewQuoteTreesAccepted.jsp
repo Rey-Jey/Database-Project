@@ -14,8 +14,8 @@
 <title>View Trees in this Quote</title>
 </head>
 <body>
-<form action = "viewQuotesUser" method = "post">
-  		<input type="submit" value="Back to View Quotes"/>
+<form action = "viewQuotesAUser" method = "post">
+  		<input type="submit" value="Back to View Accepted Quotes"/>
   		</form>
 
 <div align = "center"> 
@@ -25,6 +25,21 @@
 	<button>View Messages for this Quote</button>
 	</form>
 	<br>
+	<form action="finalizeRequest" >
+	<fieldset class="fieldset-auto-width">
+	<legend>Accept this Request?</legend>
+	<div>
+		<input type = "radio" name="finalReq" value="yes">
+		<label> Yes </label>
+	</div>
+	<div>
+		<input type = "radio" name="finalReq" value="no">
+		<label> No </label>
+	</div>
+	
+	</fieldset>
+	<input type = "submit" value="Submit">
+	</form>
 	
 	<table border="1" cellpadding="6">
 	<caption><h3>Selected Request: ${QuoteID}</h3></caption>

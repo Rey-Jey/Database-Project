@@ -110,6 +110,30 @@ public class quoteDAO
         return listPendingQuote;
     }
     
+    public List<quote> listAcceptedQuotes(String email) throws SQLException {
+        List<quote> listAcceptedQuote = new ArrayList<quote>();        
+        String sql = "SELECT * FROM Quote WHERE email=? and status='Accepted'";      
+              
+        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+         
+        while (resultSet.next()) {
+            int quoteID = resultSet.getInt("quoteID");
+            int tree_amt = resultSet.getInt("tree_amt");
+            double price = resultSet.getDouble("price");
+            String start_time = resultSet.getString("start_time");
+            String end_time = resultSet.getString("end_time");
+            String status = resultSet.getString("status");
+            
+            quote quotes = new quote(quoteID, tree_amt, price, start_time, end_time, status, email);
+            listAcceptedQuote.add(quotes);
+            
+        }        
+        resultSet.close();
+        return listAcceptedQuote;
+    }
+    
     public List<quote> listRejectedQuotes(String email) throws SQLException {
         List<quote> listRejectedQuote = new ArrayList<quote>();        
         String sql = "SELECT * FROM Quote WHERE email=? and status='Rejected'";      

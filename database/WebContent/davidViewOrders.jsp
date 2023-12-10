@@ -6,17 +6,17 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>View Your Orders</title>
+<title>View All Orders</title>
 </head>
 <body>
-<a href="activitypage.jsp"target ="_self" > Back to Home</a><br><br> 
+<a href="DavidSmithview.jsp"target ="_self" > Back to Home</a><br><br> 
 
-<h1 align = "center">View Your Orders</h1>
+<h1 align = "center">List All Orders</h1>
     <div align="center">
     <form action="selectOrder" method="post">
-	<label>Select an order to view its trees</label>
+	<label>Select an order request to view its trees</label>
     	<select name = "orderID">
- 			<c:forEach items = "${listUserOrder}" var="orders" varStatus="loop">
+ 			<c:forEach items = "${listOrder}" var="orders" varStatus="loop">
  				<option value="${orders.orderID}"><c:out value="${orders.orderID}" /></option>
  			</c:forEach>
  		</select>
@@ -32,9 +32,9 @@
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Status</th>
-                <%--<th>User Email</th> --%>
+                <th>User Email</th>
             </tr>
-            <c:forEach var="orders" items="${listUserOrder}">
+            <c:forEach var="orders" items="${listOrder}">
                 <tr style="text-align:center">
                     <td><c:out value="${orders.orderID}" /></td>
                     <td><c:out value="${orders.tree_amt}"/></td>
@@ -42,7 +42,7 @@
                     <td><c:out value="${orders.start_time}" /></td>
                     <td><c:out value="${orders.end_time}" /></td>
                     <td><c:out value="${orders.status}" /></td>
-                    <%-- <td><c:out value="${orders.email}" /></td> --%>
+                    <td><c:out value="${orders.email}" /></td>
 
                 </tr>
             </c:forEach>

@@ -102,6 +102,39 @@ public class treeDAO
         return listQuoteTree;
     }
     
+    public List<tree> listOrderTrees(int orderID) throws SQLException {
+        List<tree> listOrderTree = new ArrayList<tree>();        
+        String sql = "select * from tree where quoteID in (select orderID from qOrder where orderID=?);";      
+              
+        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+        preparedStatement.setInt(1, orderID);
+        ResultSet resultSet = preparedStatement.executeQuery();
+         
+        while (resultSet.next()) {
+        	int quoteID = resultSet.getInt("quoteID");
+            int treeID = resultSet.getInt("treeID");
+            double width = resultSet.getDouble("width");
+            double height = resultSet.getDouble("height");
+            String address = resultSet.getString("address");
+            String city = resultSet.getString("city");
+            String state = resultSet.getString("state"); 
+            String zipcode = resultSet.getString("zipcode"); 
+            double distance = resultSet.getDouble("distance");
+            String image1 = resultSet.getString("image1");
+            String image2 = resultSet.getString("image2");
+            String image3 = resultSet.getString("image3");
+            String notes = resultSet.getString("notes"); 
+            String date = resultSet.getString("date");
+             
+            tree trees = new tree(treeID, width, height, address, city, state, zipcode, distance, image1, image2, image3, notes, date, quoteID);
+            listOrderTree.add(trees);
+            
+        }        
+        resultSet.close();
+                
+        return listOrderTree;
+    }
+    
     public void insert(tree trees) throws SQLException {
     	         
 		String sql = "insert into Tree(width, height, address, city, state, zipcode, distance, image1, image2, image3, notes, date, quoteID) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -197,16 +230,23 @@ public class treeDAO
         return tree;
     }
     
-   public tree countTree(int quoteID) throws SQLException {
-    	tree tree = null;
-    	String sql = "SELECT COUNT(*) INTO @count FROM Tree WHERE quoteID = ?; " + "Update Quote set tree_amt = @count where quoteID=?; ";
+   public void countTree(int quoteID) throws SQLException {
+    	//tree tree = null;
+    	String sql = "SET @count = (SELECT COUNT(*) FROM Tree WHERE quoteID = ?); ";
+    	String sql2 = "UPDATE Quote SET tree_amt = @count WHERE quoteID = ?; ";
     	
-        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+        try (PreparedStatement countStatement= connect.prepareStatement(sql);
+        	PreparedStatement updateStatement = connect.prepareStatement(sql2)) {
         preparedStatement.setInt(1, quoteID);
-                 
-        preparedStatement.close();
+        
+        try (ResultSet resultSet = countStatement.executeQuery()){
+        	
+        }
+        
+        preparedStatement.execute(); 
+        }
          
-        return tree;
+       // return tree;
     } 
     
     public void init() throws SQLException, FileNotFoundException, IOException{

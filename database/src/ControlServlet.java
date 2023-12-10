@@ -119,6 +119,11 @@ public class ControlServlet extends HttpServlet {
         		System.out.println("quote has been selected");
         		selectQuote(request, response);
         		break;
+        		
+        	case "/selectQuoteAccepted":
+        		System.out.println("Accepted quote selected");
+        		selectQuoteAccepted(request, response);
+        		break;
     		
         	case "/sendRequest":
         		System.out.println("Sending request...");
@@ -133,6 +138,16 @@ public class ControlServlet extends HttpServlet {
         	case "/viewQuotesUser":
         		System.out.println("Showing all quotes for the user");
         		listUserQuotes(request, response);
+        		break;
+        		
+        	case "/viewQuotesAUser":
+        		System.out.println("Showing all accepted quotes for the user");
+        		listUserQuotesA(request, response);
+        		break;
+        		
+        	case "/viewQuotesRUser":
+        		System.out.println("Showing all rejected quotes for the user");
+        		listUserQuotesR(request, response);
         		break;
         		
         	case "/viewMessages":
@@ -159,11 +174,21 @@ public class ControlServlet extends HttpServlet {
         		System.out.println("Going to finalize this request");
         		reqFinal(request,response);
         		break;
+                
+        	case "/selectOrder":
+        		System.out.println("Showing tree in this order");
+        		selectOrder(request, response);
+        		break;
+        	
+        	case "/viewOrders":
+        		System.out.println("Showing all orders for David Smith...");
+        		listAllOrders(request, response);
+        		break;
         		
         	case "/viewOrdersUser":
         		System.out.println("Showing orders for this user");
         		listUserOrders(request, response);
-                 
+                break;
 	    	}
 	    }
 	    catch(Exception ex) {
@@ -322,6 +347,39 @@ public class ControlServlet extends HttpServlet {
 	    	
 	    }
 	    
+	    private void selectQuoteAccepted(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	int quoteID = Integer.parseInt(request.getParameter("quoteID"));
+	    	//String email = currentUser;
+	    	
+	    	currentQuote = quoteID;
+	    	System.out.println("Displaying trees under quote " + quoteID);
+	    	request.setAttribute("listQuoteTree", treeDAO.listQuoteTrees(quoteID));
+	    	request.setAttribute("QuoteID", quoteID);
+	    	
+	    	request.getRequestDispatcher("userViewQuoteTreesAccepted.jsp").forward(request, response);
+	    		
+	    }
+	    
+	    private void selectOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	int orderID = Integer.parseInt(request.getParameter("orderID"));
+	    	String email = currentUser;
+	    	
+	    	//currentQuote = quoteID;
+	    	System.out.println("Displaying trees under order " + orderID);
+	    	request.setAttribute("listOrderTree", treeDAO.listOrderTrees(orderID));
+	    	request.setAttribute("OrderID", orderID);
+	    	
+	    	if (email.equals("davidsmith@gmail.com")) {
+	    		request.getRequestDispatcher("viewOrderTrees.jsp").forward(request, response);
+	    	}
+	    	
+	    	else { 
+	    		request.getRequestDispatcher("userViewOrderTrees.jsp").forward(request, response);
+	    		
+	    	}
+	    	
+	    }
+	    
 	    private void selectReq(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	int quoteID = Integer.parseInt(request.getParameter("quoteID"));
 	    	//String email = currentUser;
@@ -392,9 +450,32 @@ public class ControlServlet extends HttpServlet {
 	    private void listUserQuotes(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	String email = currentUser;
 	    	
-	    	request.setAttribute("listUserQuote", quoteDAO.listUserQuotes(email));
+	    	request.setAttribute("listUserQuote", quoteDAO.listPendingQuotes(email));
 	    	
 	    	request.getRequestDispatcher("userViewQuotes.jsp").forward(request, response);
+	    }
+	    
+	    private void listUserQuotesA(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String email = currentUser;
+	    	
+	    	request.setAttribute("listUserQuote", quoteDAO.listAcceptedQuotes(email));
+	    	
+	    	request.getRequestDispatcher("userViewQuotesAccepted.jsp").forward(request, response);
+	    }
+	    
+	    private void listUserQuotesR(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String email = currentUser;
+	    	
+	    	request.setAttribute("listUserQuote", quoteDAO.listRejectedQuotes(email));
+	    	
+	    	request.getRequestDispatcher("userViewQuotesRejected.jsp").forward(request, response);
+	    }
+	    
+	    
+	    private void listAllOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listOrder", orderDAO.listAllOrders());
+			
+	    	request.getRequestDispatcher("davidViewOrders.jsp").forward(request, response);
 	    }
 	    
 	    private void listUserOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -481,12 +562,14 @@ public class ControlServlet extends HttpServlet {
 	    	String choice = request.getParameter("finalReq");
 	    	
 	    	if (choice == "no") {
+	    		System.out.println("Quote Rejected");
 	    		negotiateQuoteDAO.delete(quoteID);
 		    	treeDAO.delete(quoteID);
 		    	quoteDAO.delete(quoteID);
 	    	}
 	    	
 	    	else {
+	    		System.out.println("Quote Accepted");
 	    		order orders = new order(quoteID);
 	    		orderDAO.insertFromQuote(orders);
 	    	}
