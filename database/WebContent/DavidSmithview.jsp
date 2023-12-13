@@ -24,8 +24,10 @@
   		</form>
 	</div>
 	<br>
-	<div>
-  		<button>View Bills</button>
+	 <div>
+  		<form action = "viewBills" method = "post">
+  		<input type="submit" value="View Bills"/>
+  		</form>
 	</div>
 	<br>
 	 	

@@ -59,6 +59,13 @@ div {
 		</form>
 	</div>
 	
+		<div>
+		<form action="viewBillsUser" method="post">
+
+			<input type="submit" value="View all bills"/>
+
+		</form>
+	</div>
 		 <a href="login.jsp"target ="_self" > logout</a>
 		 <p> You can find quotes you've made here.</p>
 		 </center>

@@ -31,6 +31,8 @@ public class ControlServlet extends HttpServlet {
 	    private negotiateBillDAO negotiateBillDAO;
 	    private String currentUser;
 	    private int currentQuote;
+	    private int currentOrder;
+	    private int currentBill;
 	    private HttpSession session=null;
 	    
 	    public ControlServlet()
@@ -50,6 +52,8 @@ public class ControlServlet extends HttpServlet {
 		    	negotiateBillDAO = new negotiateBillDAO(dbConnect.getDbConnection());
 		    	currentUser= "";
 		    	currentQuote = 0;
+		    	currentOrder = 0;
+		    	currentBill = 0;
 	    	} catch (SQLException e) {
 	    		e.printStackTrace();
 	    	}
@@ -77,6 +81,8 @@ public class ControlServlet extends HttpServlet {
         		treeDAO.init(); //tree table
         		negotiateQuoteDAO.init();
         		orderDAO.init();
+        		billDAO.init();
+        		negotiateBillDAO.init();
         		System.out.println("Database successfully initialized!");
         		rootPage(request,response,"initialize");
         		break;
@@ -164,10 +170,20 @@ public class ControlServlet extends HttpServlet {
         		System.out.println("Sending response...");
         		sendResponse(request, response);
         		break;
-        	
+        		
+        	case "/sendResponseBill":
+        		System.out.println("Sending response...");
+        		sendResponseBill(request, response);
+        		break;
+        		
         	case "/msgGoBack":
         		System.out.println("Gotta have this ugh");
         		msgGoBack(request, response);
+        		break;
+        		
+        	case "/msgGoBackBill":
+        		System.out.println("Gotta have this ugh");
+        		msgGoBackBill(request, response);
         		break;
         		
         	case "/finalizeRequest":
@@ -189,7 +205,32 @@ public class ControlServlet extends HttpServlet {
         		System.out.println("Showing orders for this user");
         		listUserOrders(request, response);
                 break;
-	    	}
+                
+        	case "/generateBill":
+        		System.out.println("Creating a bill");
+        		makeBill(request, response);
+        		break;
+        	
+        	case "/viewBills":
+        		System.out.println("showing all bills for David Smith");
+        		listAllBills(request, response);
+        		break;
+    		
+        	case "/viewBillsUser":
+        		System.out.println("showing bills for this user");
+        		listUserBills(request, response);
+        		break;
+        		
+        	case "/selectBill":
+        		System.out.println("Showing tree in this order");
+        		selectBill(request, response);
+        		break;
+        		
+        	case "/viewBillMessages":
+        		System.out.println("Showing messages for this bill");
+        		viewBillMessages(request, response);
+        		break;
+        	}
 	    }
 	    catch(Exception ex) {
         	System.out.println(ex.getMessage());
@@ -298,6 +339,8 @@ public class ControlServlet extends HttpServlet {
 	    private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    	currentUser = "";
 	    	currentQuote = 0;
+	    	currentOrder = 0;
+	    	currentBill = 0;
 	    	
 	    	System.out.println("Current user is: " + currentUser + " Current quote ID is: " + currentQuote);
 	    	response.sendRedirect("login.jsp");
@@ -364,6 +407,8 @@ public class ControlServlet extends HttpServlet {
 	    	int orderID = Integer.parseInt(request.getParameter("orderID"));
 	    	String email = currentUser;
 	    	
+	    	currentOrder = orderID;
+	    	
 	    	//currentQuote = quoteID;
 	    	System.out.println("Displaying trees under order " + orderID);
 	    	request.setAttribute("listOrderTree", treeDAO.listOrderTrees(orderID));
@@ -375,6 +420,29 @@ public class ControlServlet extends HttpServlet {
 	    	
 	    	else { 
 	    		request.getRequestDispatcher("userViewOrderTrees.jsp").forward(request, response);
+	    		
+	    	}
+	    	
+	    }
+	    
+	    private void selectBill(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	int billID = Integer.parseInt(request.getParameter("billID"));
+	    	String email = currentUser;
+	    	currentBill = billID;
+	    	
+	    	//currentOrder = orderID;
+	    	
+	    	//currentQuote = quoteID;
+	    	System.out.println("Displaying trees under bill " + billID);
+	    	request.setAttribute("listBillTree", treeDAO.listBillTrees(billID));
+	    	request.setAttribute("BillID", billID);
+	    	
+	    	if (email.equals("davidsmith@gmail.com")) {
+	    		request.getRequestDispatcher("viewBillTrees.jsp").forward(request, response);
+	    	}
+	    	
+	    	else { 
+	    		request.getRequestDispatcher("userViewBillTrees.jsp").forward(request, response);
 	    		
 	    	}
 	    	
@@ -486,6 +554,20 @@ public class ControlServlet extends HttpServlet {
 	    	request.getRequestDispatcher("userViewOrders.jsp").forward(request, response);
 	    }
 	    
+	    private void listAllBills(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listBill", billDAO.listAllBills());
+			
+	    	request.getRequestDispatcher("davidViewBills.jsp").forward(request, response);
+	    }
+	    
+	    private void listUserBills(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String email = currentUser;
+	    	
+	    	request.setAttribute("listUserBill", billDAO.listUserBills(email));
+	    	
+	    	request.getRequestDispatcher("userViewBills.jsp").forward(request, response);
+	    }
+	    
 	    private void msgGoBack(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	String email = currentUser;
 	    	
@@ -495,6 +577,18 @@ public class ControlServlet extends HttpServlet {
 	    	
 	    	else {
 	    		listUserQuotes(request, response);
+	    	}
+	    }
+	    
+	    private void msgGoBackBill(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String email = currentUser;
+	    	
+	    	if (email.equals("davidsmith@gmail.com")) {
+	    		listAllBills(request, response);
+	    	}
+	    	
+	    	else {
+	    		listUserBills(request, response);
 	    	}
 	    }
 	    
@@ -535,7 +629,6 @@ public class ControlServlet extends HttpServlet {
 	    private void sendResponse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	int quoteID = currentQuote;
 	    	String email = currentUser;
-	    	//String status// = request.getParameter("status");
 	    	String msg = request.getParameter("msg");
 	    	
 
@@ -544,6 +637,19 @@ public class ControlServlet extends HttpServlet {
 	    	
 	    	
 	    	viewMessages(request, response);
+	    }
+	    
+	    private void sendResponseBill(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	int billID = currentBill;
+	    	String email = currentUser;
+	    	String msg = request.getParameter("msg");
+	    	
+
+    		negotiateBill respond = new negotiateBill(billID, email, msg);
+    		negotiateBillDAO.insert(respond);
+	    	
+	    	
+	    	viewBillMessages(request, response);
 	    }
 	    
 	    private void viewMessages(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -556,9 +662,19 @@ public class ControlServlet extends HttpServlet {
 	    	
 	    }
 	    
+	    private void viewBillMessages(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	int billID = currentBill;
+	    	
+	    	request.setAttribute("BillID", billID);
+	    	request.setAttribute("listMessage", negotiateBillDAO.listConvo(billID));
+	    	
+	    	request.getRequestDispatcher("messageBoardBills.jsp").forward(request, response);
+	    	
+	    }
+	    
 	    private void reqFinal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	int quoteID = currentQuote;
-	    	//String email = currentUser;
+	    	String email = currentUser;
 	    	String choice = request.getParameter("finalReq");
 	    	
 	    	if (choice == "no") {
@@ -570,12 +686,44 @@ public class ControlServlet extends HttpServlet {
 	    	
 	    	else {
 	    		System.out.println("Quote Accepted");
-	    		order orders = new order(quoteID);
+	    		order orders = new order(quoteID, email);
 	    		orderDAO.insertFromQuote(orders);
+	    		quoteDAO.updateAccept(quoteID);
 	    	}
 	    	
-	    	listUserQuotes(request, response);
+	    	listUserQuotesA(request, response);
 	    }
+	    
+	    private void makeBill(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	double price = Double.parseDouble(request.getParameter("price"));
+	    	String end_time = request.getParameter("end_time");
+	    	int orderID = currentOrder;
+	    	
+	    	bill bills = new bill(orderID, price, end_time);
+	    	billDAO.insertFromOrder(bills);
+	    	billDAO.insertIntoBill(bills);
+	    	orderDAO.completeStatus(orderID);	    	
+	    	//sendInitBillResponse(request, response);
+	    	listAllBills(request, response);
+	    	
+	    }
+	    
+	    private void sendInitBillResponse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	int billID = currentBill;
+	    	String email = currentUser;
+	    	//String status// = request.getParameter("status");
+	    	String msg = request.getParameter("msg");
+	    	
+
+    		negotiateBill respond = new negotiateBill(billID, email, msg);
+    		negotiateBillDAO.insert(respond);
+	    	
+	    	
+	    	//viewBillMessages(request, response);
+	    }
+
+	    
+	    
 	    
 }
 	        

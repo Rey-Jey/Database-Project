@@ -38,51 +38,45 @@ public class negotiateBillDAO
 	 * @see HttpServlet#HttpServlet()
      */
     
-    public List<negotiateQuote> listAllNQ() throws SQLException {
-        List<negotiateQuote> listNegQ = new ArrayList<negotiateQuote>();        
-        String sql = "SELECT * FROM NegotiateQuote";   
+    public List<negotiateBill> listAllNB() throws SQLException {
+        List<negotiateBill> listNegB = new ArrayList<negotiateBill>();        
+        String sql = "SELECT * FROM NegotiateBill";   
         statement = (Statement) connect.createStatement();
         ResultSet resultSet = statement.executeQuery(sql);
          
         while (resultSet.next()) {
             int negotiateBID = resultSet.getInt("negotiateBID");
-            int quoteID = resultSet.getInt("quoteID");
+            int billID = resultSet.getInt("billID");
             String email = resultSet.getString("email");
-            double price = resultSet.getDouble("price");
-            String start_time = resultSet.getString("start_time");
-            String end_time = resultSet.getString("end_time"); 
             String msg = resultSet.getString("msg"); 
             String date = resultSet.getString("date"); 
 
-            negotiateQuote negQs = new negotiateQuote(negotiateBID, quoteID, email, price, start_time, end_time, msg, date);
-            listNegQ.add(negQs);
+            negotiateBill negBs = new negotiateBill(negotiateBID, billID, email, msg, date);
+            listNegB.add(negBs);
             
         }        
         resultSet.close();
         
                 
-        return listNegQ;
+        return listNegB;
     }
     
-    public List<negotiateQuote> listConvo(int quoteID) throws SQLException {
-        List<negotiateQuote> listConvo = new ArrayList<negotiateQuote>();        
+    public List<negotiateBill> listConvo(int billID) throws SQLException {
+        List<negotiateBill> listConvo = new ArrayList<negotiateBill>();        
         String sql = "SELECT * FROM NegotiateQuote where quoteID=?";
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setInt(1, quoteID);
+        preparedStatement.setInt(1, billID);
         ResultSet resultSet = preparedStatement.executeQuery();
          
         while (resultSet.next()) {
             int negotiateBID = resultSet.getInt("negotiateBID");
             String email = resultSet.getString("email");
-            double price = resultSet.getDouble("price");
-            String start_time = resultSet.getString("start_time");
-            String end_time = resultSet.getString("end_time"); 
             String msg = resultSet.getString("msg"); 
             String date = resultSet.getString("date"); 
 
-            negotiateQuote quoteConvo = new negotiateQuote(negotiateBID, quoteID, email, price, start_time, end_time, msg, date);
-            listConvo.add(quoteConvo);
+            negotiateBill billConvo = new negotiateBill(negotiateBID, billID, email, msg, date);
+            listConvo.add(billConvo);
             
         }        
         resultSet.close();
@@ -91,53 +85,31 @@ public class negotiateBillDAO
         return listConvo;
     }
     
-    public void insert(negotiateQuote negQs) throws SQLException {
+    public void insert(negotiateBill negBs) throws SQLException {
     	
-		String sql = "insert into NegotiateQuote(quoteID, email, price, start_time, end_time, msg) values (?, ?, ?, ?, ?, ?)";
+		String sql = "insert into NegotiateBill(billID, email, msg) values (?, ?, ?)";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 			//preparedStatement.setInt(1, negQs.getNegotiateID());
-			preparedStatement.setInt(1, negQs.getQuoteID());
-			preparedStatement.setString(2, negQs.getEmail());
-			preparedStatement.setDouble(3, negQs.getPrice());
-			preparedStatement.setString(4, negQs.getStart_time());
-			preparedStatement.setString(5, negQs.getEnd_time());		
-			preparedStatement.setString(6, negQs.getMsg());		
+			preparedStatement.setInt(1, negBs.getBillID());
+			preparedStatement.setString(2, negBs.getEmail());	
+			preparedStatement.setString(3, negBs.getMsg());		
 			//preparedStatement.setString(8, negQs.getDate());		
 
 		preparedStatement.executeUpdate();
         preparedStatement.close();
     }
     
-    public boolean delete(int quoteID) throws SQLException {
-        String sql = "DELETE FROM NegotiateQuote WHERE quoteID = ?";        
+    public boolean delete(int billID) throws SQLException {
+        String sql = "DELETE FROM NegotiateBill WHERE billID = ?";        
          
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setInt(1, quoteID);
+        preparedStatement.setInt(1, billID);
          
         boolean rowDeleted = preparedStatement.executeUpdate() > 0;
         preparedStatement.close();
         return rowDeleted;     
     }
-     
-    public boolean update(negotiateQuote negQs) throws SQLException {
-        String sql = "update NegotiateQuote set price=?, start_time=?, end_time= ?, msg=?, date=? where negotiateBID= ?";
-        
-        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setInt(1, negQs.getNegotiateID());
-		preparedStatement.setInt(2, negQs.getQuoteID());
-		preparedStatement.setString(3, negQs.getEmail());
-		preparedStatement.setDouble(4, negQs.getPrice());
-		preparedStatement.setString(5, negQs.getStart_time());
-		preparedStatement.setString(6, negQs.getEnd_time());		
-		preparedStatement.setString(7, negQs.getMsg());		
-		preparedStatement.setString(8, negQs.getDate());		
-
-         
-        boolean rowUpdated = preparedStatement.executeUpdate() > 0;
-        preparedStatement.close();
-        return rowUpdated;     
-    }
-    
+  
     public void init() throws SQLException, FileNotFoundException, IOException{
     	
         statement =  (Statement) connect.createStatement();
@@ -145,29 +117,26 @@ public class negotiateBillDAO
         String[] INITIAL = { "drop table if exists NegotiateBill; ",
 		        ("CREATE TABLE if not exists NegotiateBill( " +
 		        	"negotiateBID INTEGER NOT NULL AUTO_INCREMENT, " +
-		            "orderID INTEGER NOT NULL, " +
+		            "billID INTEGER NOT NULL, " +
 		        	"email VARCHAR(50) NOT NULL, " +
-		        	"price DECIMAL(7,2) DEFAULT 0, " +
-		            "start_time DATE DEFAULT '0001-01-01', " +
-		            "end_time DATE DEFAULT '0001-01-01', " +
 		            "msg VARCHAR(500)," +
 		            "date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
 		            "PRIMARY KEY (negotiateBID), " +
-		            "FOREIGN KEY (orderID) REFERENCES Order(orderID)," +
+		            "FOREIGN KEY (billID) REFERENCES Bill(billID)," +
 		            "FOREIGN KEY (email) REFERENCES User(email));" )
 		        
 				};
-        String[] TUPLES = {("insert into NegotiateQuote(quoteID, email, price, start_time, end_time, msg, date)"+
-        			"values (4, 'davidsmith@gmail.com', default, default, default, 'I am not cutting these trees!', default), " +
-        			"(4, 'amelia@gmail.com', default, default, default, 'Please cut my trees!', default), " +
-        			"(4, 'davidsmith@gmail.com', default, default, default, 'No', default), " +
-        			"(4, 'amelia@gmail.com', default, default, default, 'Please cut my trees!', default), " +
-        			"(4, 'davidsmith@gmail.com', default, default, default, 'I already said no.', default), " +
-        			"(4, 'amelia@gmail.com', default, default, default, 'Please cut my trees!', default), " +
-        			"(4, 'davidsmith@gmail.com', default, default, default, 'NO', default), " +
-        			"(4, 'amelia@gmail.com', default, default, default, 'Please cut my trees!', default), " +
-        			"(4, 'davidsmith@gmail.com', default, default, default, 'FINE! I will cut your trees', default), " +
-        			"(4, 'amelia@gmail.com', default, default, default, 'Thank you!', default); ")
+        String[] TUPLES = {("insert into NegotiateBill(billID, email, msg, date)"+
+        			"values (4, 'davidsmith@gmail.com', 'I am not cutting these trees!', default), " +
+        			"(4, 'amelia@gmail.com', 'Please cut my trees!', default), " +
+        			"(4, 'davidsmith@gmail.com', 'No', default), " +
+        			"(4, 'amelia@gmail.com', 'Please cut my trees!', default), " +
+        			"(4, 'davidsmith@gmail.com', 'I already said no.', default), " +
+        			"(4, 'amelia@gmail.com', 'Please cut my trees!', default), " +
+        			"(4, 'davidsmith@gmail.com', 'NO', default), " +
+        			"(4, 'amelia@gmail.com', 'Please cut my trees!', default), " +
+        			"(4, 'davidsmith@gmail.com', 'FINE! I will cut your trees', default), " +
+        			"(4, 'amelia@gmail.com', 'Thank you!', default); ")
 			    			};
         
         //for loop to put these in database

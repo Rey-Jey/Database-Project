@@ -104,10 +104,43 @@ public class treeDAO
     
     public List<tree> listOrderTrees(int orderID) throws SQLException {
         List<tree> listOrderTree = new ArrayList<tree>();        
-        String sql = "select * from tree where quoteID in (select orderID from qOrder where orderID=?);";      
+        String sql = "select * from tree where quoteID in (select quoteID from qOrder where orderID=?);";      
               
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setInt(1, orderID);
+        ResultSet resultSet = preparedStatement.executeQuery();
+         
+        while (resultSet.next()) {
+        	int quoteID = resultSet.getInt("quoteID");
+            int treeID = resultSet.getInt("treeID");
+            double width = resultSet.getDouble("width");
+            double height = resultSet.getDouble("height");
+            String address = resultSet.getString("address");
+            String city = resultSet.getString("city");
+            String state = resultSet.getString("state"); 
+            String zipcode = resultSet.getString("zipcode"); 
+            double distance = resultSet.getDouble("distance");
+            String image1 = resultSet.getString("image1");
+            String image2 = resultSet.getString("image2");
+            String image3 = resultSet.getString("image3");
+            String notes = resultSet.getString("notes"); 
+            String date = resultSet.getString("date");
+             
+            tree trees = new tree(treeID, width, height, address, city, state, zipcode, distance, image1, image2, image3, notes, date, quoteID);
+            listOrderTree.add(trees);
+            
+        }        
+        resultSet.close();
+                
+        return listOrderTree;
+    }
+    
+    public List<tree> listBillTrees(int billID) throws SQLException {
+        List<tree> listOrderTree = new ArrayList<tree>();        
+        String sql = "Select * from tree where quoteID in (select quoteID from qOrder where orderID in (select orderID from Bill where billID =?));;";      
+              
+        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+        preparedStatement.setInt(1, billID);
         ResultSet resultSet = preparedStatement.executeQuery();
          
         while (resultSet.next()) {
@@ -232,18 +265,20 @@ public class treeDAO
     
    public void countTree(int quoteID) throws SQLException {
     	//tree tree = null;
-    	String sql = "SET @count = (SELECT COUNT(*) FROM Tree WHERE quoteID = ?); ";
-    	String sql2 = "UPDATE Quote SET tree_amt = @count WHERE quoteID = ?; ";
+    	String sql = "SELECT COUNT(*) into @count FROM Tree WHERE quoteID = ? ; ";
+    	String sql2 = "UPDATE Quote SET tree_amt = @count WHERE quoteID = ? ; ";
+    
     	
-        try (PreparedStatement countStatement= connect.prepareStatement(sql);
-        	PreparedStatement updateStatement = connect.prepareStatement(sql2)) {
-        preparedStatement.setInt(1, quoteID);
+        try (PreparedStatement preparedStatement= connect.prepareStatement(sql)) {
+        	preparedStatement.setInt(1, quoteID);
         
-        try (ResultSet resultSet = countStatement.executeQuery()){
-        	
+        	preparedStatement.execute(); 
         }
         
-        preparedStatement.execute(); 
+        try (PreparedStatement updateStatement = connect.prepareStatement(sql2)) {
+        	updateStatement.setInt(1, quoteID);
+        	
+        	updateStatement.execute();
         }
          
        // return tree;

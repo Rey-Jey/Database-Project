@@ -186,16 +186,16 @@ public class quoteDAO
     }
      
     public boolean update(quote quotes) throws SQLException {
-        String sql = "update Quote set tree_amt=?, price=?, start_time=?, end_time=?, status=? where quoteID=?";
+        String sql = "update Quote set price=?, start_time=?, end_time=?, status=? where quoteID=?";
         
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setInt(1, quotes.getTree_amt());
-		preparedStatement.setDouble(2, quotes.getPrice());
-		preparedStatement.setString(3, quotes.getStart_time());
-		preparedStatement.setString(4, quotes.getEnd_time());
-		preparedStatement.setString(5, quotes.getStatus());
-        preparedStatement.setInt(6, quotes.getQuoteID());
+        //preparedStatement.setInt(1, quotes.getTree_amt());
+		preparedStatement.setDouble(1, quotes.getPrice());
+		preparedStatement.setString(2, quotes.getStart_time());
+		preparedStatement.setString(3, quotes.getEnd_time());
+		preparedStatement.setString(4, quotes.getStatus());
+        preparedStatement.setInt(5, quotes.getQuoteID());
 
 		//preparedStatement.setString(7, quotes.getEmail());		
 	
@@ -217,6 +217,17 @@ public class quoteDAO
         boolean rowUpdated = preparedStatement.executeUpdate() > 0;
         preparedStatement.close();
         return rowUpdated;     
+    }
+    
+    public boolean updateAccept(int quoteID) throws SQLException {
+    	String sql = "UPDATE Quote set status = 'Order' WHERE quoteID=?";
+    	
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setInt(1, quoteID);
+    	
+    	boolean statusUpdated = preparedStatement.executeUpdate() > 0;
+    	preparedStatement.close();
+    	return statusUpdated;
     }
     
     public quote getQuote(int quoteID) throws SQLException {
