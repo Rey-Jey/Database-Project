@@ -23,22 +23,7 @@
 
 •	Open all .jsp files to run it on web browser
 
-# Project Parts and Contributions: 
-•	Rey:
-
-    o	Created ER diagram and relational model
-
-    o	Created tuples and tables used in the code
-
-    o	Modified with creating the root page and client page
-
-•	Aleks:
-
-    o	Completed GitHub setup 
-
-    o	Created David Smith’s view page
-
-    o	Assisted with creating the root page and client page
+# THIS PROJECT STARTING FROM PART 1 WAS DONE SOLELY BY REY JAKOSALEM
 
 
 
