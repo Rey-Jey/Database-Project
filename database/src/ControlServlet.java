@@ -892,7 +892,8 @@ public class ControlServlet extends HttpServlet {
 	    }
 	    
 	    private void stats(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-			request.setAttribute("listStats", statsDAO.Statistics());
+			request.setAttribute("listStat", statsDAO.Statistics());
+			
 	    	request.getRequestDispatcher("Statistics.jsp").forward(request, response);
 	    }
 	    

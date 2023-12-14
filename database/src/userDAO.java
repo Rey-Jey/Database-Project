@@ -247,22 +247,23 @@ public class userDAO
     public List<user> BigClients() throws SQLException {
         List<user> listUser = new ArrayList<user>();        
         String sql = 
-        		"WITH clientRank AS ("
-        		+ "	Select "
-        		+ "		email, "
-        		+ "		RANK() OVER (ORDER BY COUNT(*) DESC) AS tree_amt_rank"
-        		+ " FROM "
-        		+ "		Bill "
-        		+ "	Group By "
-        		+ "		email"
-        		+ " )"
-        		
-        		+ "Select "
-        		+ "		email "
-        		+ "From "
-        		+ "		clientRank "
-        		+ "Where "
-        		+ "		tree_amt_rank=1; ";   
+        		"WITH clientRank AS (\r\n"
+        		+ "	Select \r\n"
+        		+ "		email,\r\n"
+        		+ "        SUM(tree_amt) AS total_trees,\r\n"
+        		+ "		RANK() OVER (ORDER BY SUM(tree_amt) DESC) AS tree_amt_rank\r\n"
+        		+ "    FROM\r\n"
+        		+ "		Bill\r\n"
+        		+ "	Group By\r\n"
+        		+ "		email\r\n"
+        		+ "        )\r\n"
+        		+ "Select \r\n"
+        		+ "	email,\r\n"
+        		+ "    total_trees\r\n"
+        		+ "From \r\n"
+        		+ "clientRank\r\n"
+        		+ "Where\r\n"
+        		+ "tree_amt_rank = 1;";   
         statement = (Statement) connect.createStatement();
         ResultSet resultSet = statement.executeQuery(sql);
          

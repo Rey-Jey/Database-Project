@@ -22,13 +22,13 @@
                 <th>Total Amount Paid</th>
                 <th>Dates</th>
             </tr>
-            <c:forEach var="statss" items="${listStats}">
+            <c:forEach var="stats" items="${listStat}">
                 <tr style="text-align:center">
-                    <td><c:out value="${statss.email}" /></td>
-                    <td><c:out value="${statss.trees}" /></td>
-                    <td><c:out value="${statss.email}" /></td>
-                    <td><c:out value="${statss.email}" /></td>
-                    <td><c:out value="${statss.email}" /></td>
+                    <td><c:out value="${stats.email}" /></td>
+                    <td><c:out value="${stats.totalTrees}" /></td>
+                    <td><c:out value="${stats.totalDue}" /></td>
+                    <td><c:out value="${stats.totalPaid}" /></td>
+                    <td><c:out value="${stats.workDates}" /></td>
                 </tr>
             </c:forEach>
         </table>

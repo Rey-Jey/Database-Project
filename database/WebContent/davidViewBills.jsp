@@ -24,7 +24,7 @@
 	<input type = "submit" value = "Select Bill"/>
 	</form>
         <table border="1" cellpadding="6">
-            <caption><h2>List of Overdue Bills</h2></caption>
+            <caption><h2>List of Bills</h2></caption>
             <tr>
                 <th>ID</th>
                 <th># of Trees</th>

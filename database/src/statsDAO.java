@@ -55,14 +55,14 @@ public class statsDAO
 	         
 			        while (resultSet.next()) {
 			            String email = resultSet.getString("email");
-			        	int total_trees = resultSet.getInt("total_trees");
-			            double total_due = resultSet.getDouble("total_due");
-			            double total_paid= resultSet.getDouble("total_paid");
-			            String work_dates = resultSet.getString("work_dates");
+			        	int totalTrees = resultSet.getInt("total_trees");
+			            double totalDue = resultSet.getDouble("total_due");
+			            double totalPaid= resultSet.getDouble("total_paid");
+			            String workDates = resultSet.getString("work_dates");
 		
 			            
-			            stats statss = new stats(email, total_trees, total_due, total_paid, work_dates);
-			            listStat.add(statss);		            
+			            stats stat = new stats(email, totalTrees, totalDue, totalPaid, workDates);
+			            listStat.add(stat);		            
 			        }
 			        
 			        
