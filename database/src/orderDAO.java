@@ -115,9 +115,9 @@ public class orderDAO
     
     public void insertFromQuote(order orders) throws SQLException {
     	            
-		String sql = "insert into Order(quoteID) SELECT * from Quote WHERE quoteID=?";
+		String sql = "insert into qOrder (quoteID, tree_amt, price, email, contractor, start_time, end_time) select quoteID, tree_amt, price, email, contractor, start_time, end_time from Quote where quoteID=?";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);	
-			preparedStatement.setInt(1, orders.getQuoteID());		
+		preparedStatement.setInt(1, orders.getQuoteID());		
 
 
 		preparedStatement.executeUpdate();
@@ -127,7 +127,7 @@ public class orderDAO
     //public void ()
     
     public boolean delete(int orderID) throws SQLException {
-        String sql = "DELETE FROM Order WHERE orderID = ?";        
+        String sql = "DELETE FROM qOrder WHERE orderID = ?";        
         
          
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -139,7 +139,7 @@ public class orderDAO
     }
      
     public boolean update(order orders) throws SQLException {
-        String sql = "update Order set quoteID=?, tree_amt=?, price=?, start_time=?, end_time=?, status=? where quoteID=?";
+        String sql = "update qOrder set quoteID=?, tree_amt=?, price=?, start_time=?, end_time=?, status=? where quoteID=?";
         
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -159,14 +159,11 @@ public class orderDAO
         return rowUpdated;     
     }
     
-    public boolean updateStatus(int orderID, String status) throws SQLException {
-        String sql = "update Quote set status=? where quoteID=?";
+    public boolean completeStatus(int orderID) throws SQLException {
+        String sql = "update qOrder set status= 'Completed' where orderID=?";
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setString(1, status);
-		preparedStatement.setInt(2, orderID);
-				
-	
+		preparedStatement.setInt(1, orderID);
          
         boolean rowUpdated = preparedStatement.executeUpdate() > 0;
         preparedStatement.close();
@@ -213,24 +210,24 @@ public class orderDAO
 					        	"contractor VARCHAR(50) DEFAULT 'davidsmith@gmail.com', " +
 					            "start_time DATE DEFAULT '0001-01-01', " +
 					            "end_time DATE DEFAULT '0001-01-01', " +
-					            "status VARCHAR(10) DEFAULT 'Pending', " +
+					            "status VARCHAR(20) DEFAULT 'In Progress', " +
 					            "PRIMARY KEY (orderID), " +
 					            "FOREIGN KEY (quoteID) REFERENCES Quote(quoteID)," +
 					            "FOREIGN KEY (email) REFERENCES User(email)," +
 					            "FOREIGN KEY (contractor) REFERENCES User(email));" )
 					        
         					};
-        String[] TUPLES = {("insert into qOrder(orderID, quoteID, tree_amt, price, start_time, end_time, status, email)" +
-        					"values (1, 1, default, default, '2023-10-10', '2023-10-11', default, 'rey@gmail.com'), " +
-        					"(2, 2, default, default, '2023-11-15', '2023-12-01', default, 'j@gmail.com'), " +
-        					"(3, 3, default, default, '2023-12-17', '2024-01-01', default, 'wallace@gmail.com'), " +
-        					"(4, 4, default, default, default, default, 'Rejected', 'amelia@gmail.com'), " +
-        					"(5, 5, default, default, '2023-12-10', '2023-12-11', default, 'rey@gmail.com'), " +
-        					"(6, 6, default, default, '2023-12-10', '2023-12-11', default, 'j@gmail.com'), " +
-        					"(7, 7, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
-        					"(8, 8, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
-        					"(9, 9, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
-        					"(10, 10, default, default, '2023-01-10', '2023-02-11', default, 'sophie@gmail.com');"
+        String[] TUPLES = {("insert into qOrder(quoteID, tree_amt, price, start_time, end_time, status, email)" +
+        					"values (1, default, default, '2023-10-10', '2023-10-11', default, 'rey@gmail.com'), " +
+        					"(2, default, default, '2023-11-15', '2023-12-01', default, 'j@gmail.com'), " +
+        					"(3, default, default, '2023-12-17', '2024-01-01', default, 'wallace@gmail.com'), " +
+        					"(4, default, default, default, default, default, 'amelia@gmail.com'), " +
+        					"(5, default, default, '2023-12-10', '2023-12-11', default, 'rey@gmail.com'), " +
+        					"(6, default, default, '2023-12-10', '2023-12-11', default, 'j@gmail.com'), " +
+        					"(7, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
+        					"(8, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
+        					"(9, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
+        					"(10, default, default, '2023-01-10', '2023-02-11', default, 'sophie@gmail.com');"
         					
     		)
 		};

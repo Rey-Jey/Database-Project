@@ -38,116 +38,81 @@ public class billDAO
 	 * @see HttpServlet#HttpServlet()
      */
     
-    public List<quote> listAllOrders() throws SQLException {
-        List<quote> listQuote = new ArrayList<quote>();        
-        String sql = "SELECT * FROM Quote";      
+    public List<bill> listAllBills() throws SQLException {
+        List<bill> listBill = new ArrayList<bill>();        
+        String sql = "SELECT * FROM Bill";      
               
         statement = (Statement) connect.createStatement();
         ResultSet resultSet = statement.executeQuery(sql);
          
         while (resultSet.next()) {
-            int quoteID = resultSet.getInt("quoteID");
+            int billID = resultSet.getInt("billID");
+            int orderID = resultSet.getInt("orderID");
             int tree_amt = resultSet.getInt("tree_amt");
             double price = resultSet.getDouble("price");
             String email = resultSet.getString("email");
             String start_time = resultSet.getString("start_time");
             String end_time = resultSet.getString("end_time");
             String status = resultSet.getString("status");
+            String date = resultSet.getString("date");
              
-            quote quotes = new quote(quoteID, tree_amt, price, start_time, end_time, status, email);
-            listQuote.add(quotes);
+            bill bills = new bill(billID, orderID, tree_amt, price, start_time, end_time, status, email, date);
+            listBill.add(bills);
             
         }        
         resultSet.close();
-        return listQuote;
+        return listBill;
     }
     
-    public List<quote> listUserQuotes(String email) throws SQLException {
-        List<quote> listUserQuote = new ArrayList<quote>();        
-        String sql = "SELECT * FROM Quote WHERE email=?";      
+    public List<bill> listUserBills(String email) throws SQLException {
+        List<bill> listUserBill = new ArrayList<bill>();        
+        String sql = "SELECT * FROM Bill WHERE email=?";      
               
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, email);
         ResultSet resultSet = preparedStatement.executeQuery();
          
         while (resultSet.next()) {
-            int quoteID = resultSet.getInt("quoteID");
+            int billID = resultSet.getInt("billID");
+            int orderID = resultSet.getInt("orderID");
             int tree_amt = resultSet.getInt("tree_amt");
             double price = resultSet.getDouble("price");
             String start_time = resultSet.getString("start_time");
             String end_time = resultSet.getString("end_time");
             String status = resultSet.getString("status");
+            String date = resultSet.getString("date");
             
-            quote quotes = new quote(quoteID, tree_amt, price, start_time, end_time, status, email);
-            listUserQuote.add(quotes);
-            
-        }        
-        resultSet.close();
-        return listUserQuote;
-    }
-    
-    public List<quote> listPendingQuotes(String email) throws SQLException {
-        List<quote> listPendingQuote = new ArrayList<quote>();        
-        String sql = "SELECT * FROM Quote WHERE email=? and status='Pending'";      
-              
-        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setString(1, email);
-        ResultSet resultSet = preparedStatement.executeQuery();
-         
-        while (resultSet.next()) {
-            int quoteID = resultSet.getInt("quoteID");
-            int tree_amt = resultSet.getInt("tree_amt");
-            double price = resultSet.getDouble("price");
-            String start_time = resultSet.getString("start_time");
-            String end_time = resultSet.getString("end_time");
-            String status = resultSet.getString("status");
-            
-            quote quotes = new quote(quoteID, tree_amt, price, start_time, end_time, status, email);
-            listPendingQuote.add(quotes);
+            bill bills = new bill(billID, orderID, tree_amt, price, start_time, end_time, status, email, date);
+            listUserBill.add(bills);
             
         }        
         resultSet.close();
-        return listPendingQuote;
+        return listUserBill;
     }
     
-    public List<quote> listRejectedQuotes(String email) throws SQLException {
-        List<quote> listRejectedQuote = new ArrayList<quote>();        
-        String sql = "SELECT * FROM Quote WHERE email=? and status='Rejected'";      
-              
-        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setString(1, email);
-        ResultSet resultSet = preparedStatement.executeQuery();
-         
-        while (resultSet.next()) {
-            int quoteID = resultSet.getInt("quoteID");
-            int tree_amt = resultSet.getInt("tree_amt");
-            double price = resultSet.getDouble("price");
-            String start_time = resultSet.getString("start_time");
-            String end_time = resultSet.getString("end_time");
-            String status = resultSet.getString("status");
-            
-            quote quotes = new quote(quoteID, tree_amt, price, start_time, end_time, status, email);
-            listRejectedQuote.add(quotes);
-            
-        }        
-        resultSet.close();
-        return listRejectedQuote;
-    }
+    public void insertFromOrder(bill bills) throws SQLException {
+        
+ 		String sql = "insert into Bill (orderID, tree_amt, email, contractor, start_time) select orderID, tree_amt, email, contractor, start_time from qOrder where orderID=?";
+ 		
+ 		
+ 		try(PreparedStatement preparedStatement = connect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+ 			preparedStatement.setInt(1, bills.getOrderID());
+ 			
+ 			int affectedRows = preparedStatement.executeUpdate();
+ 			
+ 			if(affectedRows > 0) {
+ 				try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+	 					if(generatedKeys.next()) {
+	 					int billID = generatedKeys.getInt(1);
+	 					bills.setBillID(billID);
+	 					
+	 				}
+ 				}
+ 			}
+ 		}
+     }
     
-    public void insert(quote quotes) throws SQLException {
-    	            
-		String sql = "insert into Quote(email) values (?)";
-		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-			//preparedStatement.setDouble(1, quotes.getPrice());
-			//preparedStatement.setString(2, quotes.getStart_time());
-			//preparedStatement.setString(3, quotes.getEnd_time());
-			//preparedStatement.setString(4, quotes.getStatus());		
-			preparedStatement.setString(1, quotes.getEmail());		
-
-
-		preparedStatement.executeUpdate();
-        preparedStatement.close();
-    }
+    
     
     public boolean delete(int quoteID) throws SQLException {
         String sql = "DELETE FROM Quote WHERE quoteID = ?";        
@@ -161,17 +126,17 @@ public class billDAO
         return rowDeleted;     
     }
      
-    public boolean update(quote quotes) throws SQLException {
-        String sql = "update Quote set tree_amt=?, price=?, start_time=?, end_time=?, status=? where quoteID=?";
+    public boolean insertIntoBill(bill bills) throws SQLException {
+        String sql = "update Bill set price=?, end_time=? where orderID=?";
         
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setInt(1, quotes.getTree_amt());
-		preparedStatement.setDouble(2, quotes.getPrice());
-		preparedStatement.setString(3, quotes.getStart_time());
-		preparedStatement.setString(4, quotes.getEnd_time());
-		preparedStatement.setString(5, quotes.getStatus());
-        preparedStatement.setInt(6, quotes.getQuoteID());
+        //preparedStatement.setInt(1, bills.getTree_amt());
+		preparedStatement.setDouble(1, bills.getPrice());
+		//preparedStatement.setString(3, bills.getStart_time());
+		preparedStatement.setString(2, bills.getEnd_time());
+		//preparedStatement.setString(5, bills.getStatus());
+        preparedStatement.setInt(3, bills.getOrderID());
 
 		//preparedStatement.setString(7, quotes.getEmail());		
 	
@@ -181,14 +146,27 @@ public class billDAO
         return rowUpdated;     
     }
     
-    public boolean updateStatus(int quoteID, String status) throws SQLException {
-        String sql = "update Quote set status=? where quoteID=?";
+    public boolean updateBill(bill bills) throws SQLException {
+    	String sql = "update Bill set price=? where billID = ?";
+    	
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	
+    	preparedStatement.setDouble(1, bills.getPrice());
+    	preparedStatement.setInt(2, bills.getBillID());
+    	
+    	boolean rowUpdated = preparedStatement.executeUpdate() > 0;
+    	preparedStatement.close();
+    	return rowUpdated;
+    }
+    
+    
+    
+    public boolean payBill(int billID, String status) throws SQLException {
+        String sql = "update Bill set status=?, paydate = CURRENT_TIMESTAMP where billID=?";
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, status);
-		preparedStatement.setInt(2, quoteID);
-				
-	
+		preparedStatement.setInt(2, billID);
          
         boolean rowUpdated = preparedStatement.executeUpdate() > 0;
         preparedStatement.close();
@@ -220,6 +198,33 @@ public class billDAO
         return currentQuote;
     }
     
+    public List<bill> OverdueBills() throws SQLException {
+        List<bill> listBill = new ArrayList<bill>();        
+        String sql = "Select * from Bill where date <= NOW() - INTERVAL 1 WEEK;\r\n"
+        		+ "";      
+              
+        statement = (Statement) connect.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            int billID = resultSet.getInt("billID");
+            int orderID = resultSet.getInt("orderID");
+            int tree_amt = resultSet.getInt("tree_amt");
+            double price = resultSet.getDouble("price");
+            String email = resultSet.getString("email");
+            String start_time = resultSet.getString("start_time");
+            String end_time = resultSet.getString("end_time");
+            String status = resultSet.getString("status");
+            String date = resultSet.getString("date");
+             
+            bill bills = new bill(billID, orderID, tree_amt, price, start_time, end_time, status, email, date);
+            listBill.add(bills);
+            
+        }        
+        resultSet.close();
+        return listBill;
+    }
+    
     public void init() throws SQLException, FileNotFoundException, IOException {
     	
         statement =  (Statement) connect.createStatement();
@@ -235,7 +240,10 @@ public class billDAO
 					            "start_time DATE DEFAULT '0001-01-01', " +
 					            "end_time DATE DEFAULT '0001-01-01', " +
 					            "status VARCHAR(10) DEFAULT 'Pending', " +
-					            "PRIMARY KEY (quoteID), " +
+					            "date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+					            "paydate TIMESTAMP, " +
+					            "PRIMARY KEY (billID), " +
+					            "FOREIGN KEY (orderID) REFERENCES qOrder(orderID), " +
 					            "FOREIGN KEY (email) REFERENCES User(email)," +
 					            "FOREIGN KEY (contractor) REFERENCES User(email));" )
 					        
@@ -244,11 +252,11 @@ public class billDAO
         					"values (1, default, default, '2023-10-10', '2023-10-11', default, 'rey@gmail.com'), " +
         					"(2, default, default, '2023-11-15', '2023-12-01', default, 'j@gmail.com'), " +
         					"(3, default, default, '2023-12-17', '2024-01-01', default, 'wallace@gmail.com'), " +
-        					"(4, default, default, default, default, 'Rejected', 'amelia@gmail.com'), " +
+        					"(4, default, default, default, default, default, 'amelia@gmail.com'), " +
         					"(5, default, default, '2023-12-10', '2023-12-11', default, 'rey@gmail.com'), " +
         					"(6, default, default, '2023-12-10', '2023-12-11', default, 'j@gmail.com'), " +
         					"(7, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
-        					"(8, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
+        					"(8,default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
         					"(9, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +
         					"(10, default, default, '2023-01-10', '2023-02-11', default, 'sophie@gmail.com');"
         					

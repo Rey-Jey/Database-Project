@@ -5,29 +5,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style type ="text/css">
-	.fieldset-auto-width {
-		display:inline-block;
-	}
-</style>
 <meta charset="ISO-8859-1">
-<title>View Trees in this Quote</title>
+<title>View Trees in this Bill</title>
 </head>
 <body>
-<form action = "viewQuotesUser" method = "post">
-  		<input type="submit" value="Back to View Quotes"/>
+<form action = "viewBillsUser" method = "post">
+  		<input type="submit" value="Back to View Bils"/>
   		</form>
 
 <div align = "center"> 
-<h1>Trees in this Request</h1>
+<h1>Trees in this Bill</h1>
 	<div align = "center">
-	<form action="viewMessages" >
-	<button>View Messages for this Quote</button>
+	<form action="viewBillMessages" >
+	<button>View Messages for this Bill</button>
 	</form>
-	<br>
-	
+	<br><br>
+	<form action = "payBill">
+	<button>Pay this Bill</button>
+	</form>
 	<table border="1" cellpadding="6">
-	<caption><h3>Selected Request: ${QuoteID}</h3></caption>
+	<caption><h3>Selected Bill: ${BillID}</h3></caption>
             <tr>
             	<th>Tree ID</th>
                 <th>Width (meters)</th>
@@ -38,7 +35,7 @@
                 <th>Date</th>
                 <th>Notes</th>
             </tr>
-            <c:forEach var="trees" items="${listQuoteTree}">
+            <c:forEach var="trees" items="${listBillTree}">
                 <tr style="text-align:center">
                 	<td><c:out value="${trees.treeID}" /></td>
                     <td><c:out value="${trees.width}" />m</td>

@@ -3,13 +3,13 @@
  <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
-<head><title>Bill Negotiations</title></head>
+<head><title>Quote Negotiations</title></head>
 <body>
-<form action = "viewMessages" method = "post">
-  		<input type="submit" value="Back to Quotes"/>
+<form action = "viewBillMessages" method = "post">
+  		<input type="submit" value="Back to Bills"/>
   		</form>
 	<div align="center">
-		 <form action="sendResponse" method="post">
+		 <form action="sendResponseBill" method="post">
 		<h1>Write a Message</h1>
 			<table border="1" cellpadding="5">
 				<tr>
