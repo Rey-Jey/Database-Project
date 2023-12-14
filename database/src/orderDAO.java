@@ -221,7 +221,7 @@ public class orderDAO
         					"values (1, default, default, '2023-10-10', '2023-10-11', default, 'rey@gmail.com'), " +
         					"(2, default, default, '2023-11-15', '2023-12-01', default, 'j@gmail.com'), " +
         					"(3, default, default, '2023-12-17', '2024-01-01', default, 'wallace@gmail.com'), " +
-        					"(4, default, default, default, default, 'default', 'amelia@gmail.com'), " +
+        					"(4, default, default, default, default, default, 'amelia@gmail.com'), " +
         					"(5, default, default, '2023-12-10', '2023-12-11', default, 'rey@gmail.com'), " +
         					"(6, default, default, '2023-12-10', '2023-12-11', default, 'j@gmail.com'), " +
         					"(7, default, default, '2023-12-10', '2023-12-11', default, 'wallace@gmail.com'), " +

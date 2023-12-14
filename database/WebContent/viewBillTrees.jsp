@@ -10,16 +10,19 @@
 </head>
 <body>
 <form action = "viewBills" method = "post">
-  		<input type="submit" value="Back to View Bils"/>
+  		<input type="submit" value="Back to View Bills"/>
   		</form>
 
 <div align = "center"> 
 <h1>Trees in this Bill</h1>
 	<div align = "center">
-		<form action="viewBillMessages" >
+	<form action="viewBillMessages" >
 	<button>View Messages for this Bill</button>
 	</form>
-	<br><br>
+	<br>
+	<a href="updateBill.jsp" >
+	<button>Update this Bill</button>
+	</a>
 	<table border="1" cellpadding="6">
 	<caption><h3>Selected Bill: ${BillID}</h3></caption>
             <tr>

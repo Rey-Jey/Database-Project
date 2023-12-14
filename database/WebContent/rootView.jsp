@@ -5,6 +5,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+div {
+	margin: 1rem;
+}
+</style>
 <meta charset="ISO-8859-1">
 <title>Root page</title>
 </head>
@@ -15,7 +20,62 @@
 	<form action = "initialize">
 		<input type = "submit" value = "Initialize the Database"/>
 	</form>
-	<a href="login.jsp"target ="_self" > logout</a><br><br> 
+	<a href="login.jsp"target ="_self" > logout</a><br><br>
+	
+	<div>
+		<form action = "bigClients">
+		<input type = "submit" value = "Big Clients"/>
+		</form>
+	</div>
+	
+	<div>
+		<form action = "easyClients">
+		<input type = "submit" value = "Easy Clients"/>
+		</form>
+	</div>
+	
+	<div>
+		<form action = "oneTreeQuotes">
+		<input type = "submit" value = "One Tree Quotes"/>
+		</form>
+	</div>
+	
+	<div>
+		<form action = "prospectClients">
+		<input type = "submit" value = "Prospective Clients"/>
+		</form>
+	</div>
+	
+	<div>
+		<form action = "highestTrees">
+		<input type = "submit" value = "Highest Trees"/>
+		</form>
+	</div>
+	
+	<div>
+		<form action = "overdueBills">
+		<input type = "submit" value = "Overdue Bills"/>
+		</form>
+	</div>
+	
+	<div>
+		<form action = "badClients">
+		<input type = "submit" value = "Bad Clients"/>
+		</form>
+	</div>
+	
+	<div>
+		<form action = "goodClients">
+		<input type = "submit" value = "Good Clients"/>
+		</form>
+	</div>
+	
+	<div>
+		<form action = "stats">
+		<input type = "submit" value = "Statistics"/>
+		</form>
+	</div>
+	
 
 <h1>List all users</h1>
     <div align="center">

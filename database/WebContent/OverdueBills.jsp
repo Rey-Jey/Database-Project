@@ -6,23 +6,13 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>View Your Bills</title>
+<title>View Overdue Bills</title>
 </head>
 <body>
-<a href="activitypage.jsp"target ="_self" > Back to Home</a><br><br> 
+<a href="rootView.jsp"target ="_self" > Back to Root View</a><br><br> 
 
-<h1 align = "center">View Your Bills</h1>
+<h1 align = "center">List Overdue Bills</h1>
     <div align="center">
-    <form action="selectBill" method="post">
-	<label>Select a bill to view its trees</label>
-    	<select name = "billID">
- 			<c:forEach items = "${listUserBill}" var="bills" varStatus="loop">
- 				<option value="${bills.billID}"><c:out value="${bills.billID}" /></option>
- 			</c:forEach>
- 		</select>
- 		
-	<input type = "submit" value = "Select Bill"/>
-	</form>
         <table border="1" cellpadding="6">
             <caption><h2>List of Bills</h2></caption>
             <tr>
@@ -32,10 +22,10 @@
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Status</th>
+                <th>User Email</th>
                 <th>Date Posted</th>
-                <%--<th>User Email</th> --%>
             </tr>
-            <c:forEach var="bills" items="${listUserBill}">
+            <c:forEach var="bills" items="${listBill}">
                 <tr style="text-align:center">
                     <td><c:out value="${bills.billID}" /></td>
                     <td><c:out value="${bills.tree_amt}"/></td>
@@ -43,8 +33,8 @@
                     <td><c:out value="${bills.start_time}" /></td>
                     <td><c:out value="${bills.end_time}" /></td>
                     <td><c:out value="${bills.status}" /></td>
+                    <td><c:out value="${bills.email}" /></td>
                     <td><c:out value="${bills.date}" /></td>
-                    <%-- <td><c:out value="${orders.email}" /></td> --%>
 
                 </tr>
             </c:forEach>

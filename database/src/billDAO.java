@@ -54,8 +54,9 @@ public class billDAO
             String start_time = resultSet.getString("start_time");
             String end_time = resultSet.getString("end_time");
             String status = resultSet.getString("status");
+            String date = resultSet.getString("date");
              
-            bill bills = new bill(billID, orderID, tree_amt, price, start_time, end_time, status, email);
+            bill bills = new bill(billID, orderID, tree_amt, price, start_time, end_time, status, email, date);
             listBill.add(bills);
             
         }        
@@ -79,8 +80,9 @@ public class billDAO
             String start_time = resultSet.getString("start_time");
             String end_time = resultSet.getString("end_time");
             String status = resultSet.getString("status");
+            String date = resultSet.getString("date");
             
-            bill bills = new bill(billID, orderID, tree_amt, price, start_time, end_time, status, email);
+            bill bills = new bill(billID, orderID, tree_amt, price, start_time, end_time, status, email, date);
             listUserBill.add(bills);
             
         }        
@@ -91,12 +93,23 @@ public class billDAO
     public void insertFromOrder(bill bills) throws SQLException {
         
  		String sql = "insert into Bill (orderID, tree_amt, email, contractor, start_time) select orderID, tree_amt, email, contractor, start_time from qOrder where orderID=?";
- 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);	
- 		preparedStatement.setInt(1, bills.getOrderID());		
-
-
- 		preparedStatement.executeUpdate();
-         preparedStatement.close();
+ 		
+ 		
+ 		try(PreparedStatement preparedStatement = connect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+ 			preparedStatement.setInt(1, bills.getOrderID());
+ 			
+ 			int affectedRows = preparedStatement.executeUpdate();
+ 			
+ 			if(affectedRows > 0) {
+ 				try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+	 					if(generatedKeys.next()) {
+	 					int billID = generatedKeys.getInt(1);
+	 					bills.setBillID(billID);
+	 					
+	 				}
+ 				}
+ 			}
+ 		}
      }
     
     
@@ -133,16 +146,27 @@ public class billDAO
         return rowUpdated;     
     }
     
+    public boolean updateBill(bill bills) throws SQLException {
+    	String sql = "update Bill set price=? where billID = ?";
+    	
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	
+    	preparedStatement.setDouble(1, bills.getPrice());
+    	preparedStatement.setInt(2, bills.getBillID());
+    	
+    	boolean rowUpdated = preparedStatement.executeUpdate() > 0;
+    	preparedStatement.close();
+    	return rowUpdated;
+    }
     
     
-    public boolean updateStatus(int quoteID, String status) throws SQLException {
-        String sql = "update Quote set status=? where quoteID=?";
+    
+    public boolean payBill(int billID, String status) throws SQLException {
+        String sql = "update Bill set status=?, paydate = CURRENT_TIMESTAMP where billID=?";
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, status);
-		preparedStatement.setInt(2, quoteID);
-				
-	
+		preparedStatement.setInt(2, billID);
          
         boolean rowUpdated = preparedStatement.executeUpdate() > 0;
         preparedStatement.close();
@@ -174,6 +198,33 @@ public class billDAO
         return currentQuote;
     }
     
+    public List<bill> OverdueBills() throws SQLException {
+        List<bill> listBill = new ArrayList<bill>();        
+        String sql = "Select * from Bill where date <= NOW() - INTERVAL 1 WEEK;\r\n"
+        		+ "";      
+              
+        statement = (Statement) connect.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            int billID = resultSet.getInt("billID");
+            int orderID = resultSet.getInt("orderID");
+            int tree_amt = resultSet.getInt("tree_amt");
+            double price = resultSet.getDouble("price");
+            String email = resultSet.getString("email");
+            String start_time = resultSet.getString("start_time");
+            String end_time = resultSet.getString("end_time");
+            String status = resultSet.getString("status");
+            String date = resultSet.getString("date");
+             
+            bill bills = new bill(billID, orderID, tree_amt, price, start_time, end_time, status, email, date);
+            listBill.add(bills);
+            
+        }        
+        resultSet.close();
+        return listBill;
+    }
+    
     public void init() throws SQLException, FileNotFoundException, IOException {
     	
         statement =  (Statement) connect.createStatement();
@@ -189,6 +240,8 @@ public class billDAO
 					            "start_time DATE DEFAULT '0001-01-01', " +
 					            "end_time DATE DEFAULT '0001-01-01', " +
 					            "status VARCHAR(10) DEFAULT 'Pending', " +
+					            "date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+					            "paydate TIMESTAMP, " +
 					            "PRIMARY KEY (billID), " +
 					            "FOREIGN KEY (orderID) REFERENCES qOrder(orderID), " +
 					            "FOREIGN KEY (email) REFERENCES User(email)," +

@@ -8,30 +8,36 @@ public class bill
 	 	protected String end_time;
 	 	protected String status;
 	 	protected String email;
-	 	protected String contractor; //since david smith is the sole contractor, this data entry will NOT be included in any tables, this is just to keep track who is negotiating with who
+	 	protected String contractor;//since david smith is the sole contractor, this data entry will NOT be included in any tables, this is just to keep track who is negotiating with who
+	 	protected String date; //date should always be default
 	 
 	    //constructors
 	    public bill() {}
 	 
 	    public bill(int billID) { this.billID = billID;}
 	    
-	    public bill(int orderID, double price, String start_time) {
+	    public bill(int orderID, double price, String end_time) {
 	    	this.orderID = orderID;
 	    	this.price = price;
-	    	this.start_time = start_time;
+	    	this.end_time = end_time;
 	    }
 	    
 	    public bill(String status, int billID) {
 	    	this.status = status;
 	    	this.billID = billID;
 	    }
+	    
+	    public bill(Double price, int billID) {
+	    	this.price = price;
+	    	this.billID = billID;
+	    }
 		    
-	    public bill(int billID, int orderID, int tree_amt, double price, String start_time, String end_time, String status, String email) {
-	    	this(orderID, tree_amt, price, start_time, end_time, status, email);
+	    public bill(int billID, int orderID, int tree_amt, double price, String start_time, String end_time, String status, String email, String date) {
+	    	this(orderID, tree_amt, price, start_time, end_time, status, email, date);
 	    	this.billID = billID;
 	    }
 	
-	    public bill(int orderID, int tree_amt, double price, String start_time, String end_time, String status, String email) {
+	    public bill(int orderID, int tree_amt, double price, String start_time, String end_time, String status, String email, String date) {
 	    	this.orderID = orderID;
 	    	this.tree_amt = tree_amt;
 	    	this.price = price;
@@ -39,6 +45,7 @@ public class bill
 	    	this.end_time = end_time;
 	    	this.status = status;
 	    	this.email = email;
+	    	this.date = date;
 	    }
 	    
 	   //getter and setter methods
@@ -78,6 +85,9 @@ public class bill
 	    
 	    public void setContractor(String contractor) { this.contractor = contractor; }
 	    
+	    public String getDate() { return date; }
+	    
+	    public void setDate(String date) { this.date = date; }
 	    
 	    
 	}

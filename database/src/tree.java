@@ -21,6 +21,11 @@ public class tree
 	 
 	    public tree(int treeID) { this.treeID = treeID; }
 	    
+	    public tree(int treeID, double height) {
+	    	this.treeID = treeID;
+	    	this.height = height;
+	    }
+	    
 	    public tree(int treeID, double width, double height, String address, String city, String state, String zipcode, double distance, String image1, String image2, String image3, String notes, String date, int quoteID) 
 	    {
 	    	this(width, height, address, city, state, zipcode, distance, image1, image2, image3, notes, date, quoteID);

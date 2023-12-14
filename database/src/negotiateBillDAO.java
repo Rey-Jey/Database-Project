@@ -63,7 +63,7 @@ public class negotiateBillDAO
     
     public List<negotiateBill> listConvo(int billID) throws SQLException {
         List<negotiateBill> listConvo = new ArrayList<negotiateBill>();        
-        String sql = "SELECT * FROM NegotiateQuote where quoteID=?";
+        String sql = "SELECT * FROM NegotiateBill where billID=?";
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setInt(1, billID);

@@ -19,7 +19,7 @@
 	<form action="viewBillMessages" >
 	<button>View Messages for this Bill</button>
 	</form>
-	<br>
+	<br><br>
 	<form action = "payBill">
 	<button>Pay this Bill</button>
 	</form>

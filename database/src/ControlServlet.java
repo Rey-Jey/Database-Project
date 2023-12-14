@@ -29,6 +29,7 @@ public class ControlServlet extends HttpServlet {
 	    private orderDAO orderDAO;
 	    private billDAO billDAO;
 	    private negotiateBillDAO negotiateBillDAO;
+	    private statsDAO statsDAO;
 	    private String currentUser;
 	    private int currentQuote;
 	    private int currentOrder;
@@ -50,6 +51,7 @@ public class ControlServlet extends HttpServlet {
 		    	orderDAO = new orderDAO(dbConnect.getDbConnection());
 		    	billDAO = new billDAO(dbConnect.getDbConnection());
 		    	negotiateBillDAO = new negotiateBillDAO(dbConnect.getDbConnection());
+		    	statsDAO = new statsDAO(dbConnect.getDbConnection());
 		    	currentUser= "";
 		    	currentQuote = 0;
 		    	currentOrder = 0;
@@ -181,6 +183,16 @@ public class ControlServlet extends HttpServlet {
         		msgGoBack(request, response);
         		break;
         		
+        	case "/msgGoBackR":
+        		System.out.println("Gotta have this ugh");
+        		msgGoBackR(request, response);
+        		break;
+        		
+        	case "/msgGoBackA":
+        		System.out.println("Gotta have this ugh");
+        		msgGoBackA(request, response);
+        		break;
+        		
         	case "/msgGoBackBill":
         		System.out.println("Gotta have this ugh");
         		msgGoBackBill(request, response);
@@ -230,6 +242,66 @@ public class ControlServlet extends HttpServlet {
         		System.out.println("Showing messages for this bill");
         		viewBillMessages(request, response);
         		break;
+        		
+        	case "/updateBill":
+        		System.out.println("Updating bill");
+        		updateBill(request, response);
+        		break;
+        		
+        	case "/payBill":
+        		System.out.println("About to pay this bill");
+        		payBillConfirm(request, response);
+        		break;
+        	
+        	case "/payBillEnd":
+        		System.out.println("Info confirmed, paying Bill");
+        		payBillEnd(request, response);
+        		
+        	case"/bigClients":
+        		System.out.println("Showing the biggest clients");
+        		bigClients(request, response);
+        		break;
+        		
+        	case"/easyClients":
+        		System.out.println("Showing the easiest clients");
+        		easyClients(request, response);
+        		break;
+        		
+        	case"/oneTreeQuotes":
+        		System.out.println("Showing the accepted quotes with only one tree");
+        		oneTreeQuotes(request, response);
+        		break;
+        		
+        	case"/prospectClients":
+        		System.out.println("Showing the prospective clients");
+        		prospectClients(request, response);
+        		break;
+        		
+        	case"/highestTrees":
+        		System.out.println("Showing the highest trees");
+        		highestTrees(request, response);
+        		break;
+        		
+        	case"/overdueBills":
+        		System.out.println("Showing the overdue bills");
+        		overdueBills(request, response);
+        		break;
+        		
+        	case"/badClients":
+        		System.out.println("Showing the bad clients");
+        		badClients(request, response);
+        		break;
+        		
+        	case"/goodClients":
+        		System.out.println("Showing the bad clients");
+        		goodClients(request, response);
+        		break;
+        		
+        	case"/stats":
+        		System.out.println("Showing user statistics");
+        		stats(request, response);
+        		break;
+        		
         	}
 	    }
 	    catch(Exception ex) {
@@ -525,7 +597,6 @@ public class ControlServlet extends HttpServlet {
 	    
 	    private void listUserQuotesA(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	String email = currentUser;
-	    	
 	    	request.setAttribute("listUserQuote", quoteDAO.listAcceptedQuotes(email));
 	    	
 	    	request.getRequestDispatcher("userViewQuotesAccepted.jsp").forward(request, response);
@@ -570,6 +641,7 @@ public class ControlServlet extends HttpServlet {
 	    
 	    private void msgGoBack(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	String email = currentUser;
+	    	int quoteID = currentQuote;
 	    	
 	    	if (email.equals("davidsmith@gmail.com")) {
 	    		listAllQuotes(request, response);
@@ -580,8 +652,24 @@ public class ControlServlet extends HttpServlet {
 	    	}
 	    }
 	    
+	    private void msgGoBackR(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String email = currentUser;
+	    	int quoteID = currentQuote;
+	    	
+	    	listUserQuotesR(request,response);
+	    }
+	    
+	    private void msgGoBackA(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String email = currentUser;
+	    	int quoteID = currentQuote;
+	 
+	    	listUserQuotesA(request, response);
+	    
+	    }
+	    
 	    private void msgGoBackBill(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	String email = currentUser;
+	    	int ID = currentBill;
 	    	
 	    	if (email.equals("davidsmith@gmail.com")) {
 	    		listAllBills(request, response);
@@ -701,9 +789,13 @@ public class ControlServlet extends HttpServlet {
 	    	
 	    	bill bills = new bill(orderID, price, end_time);
 	    	billDAO.insertFromOrder(bills);
+	    	
+	    	currentBill = bills.getBillID();
+	    	System.out.println("Current Bill: " + currentBill);
+	    	
 	    	billDAO.insertIntoBill(bills);
 	    	orderDAO.completeStatus(orderID);	    	
-	    	//sendInitBillResponse(request, response);
+	    	sendInitBillResponse(request, response);
 	    	listAllBills(request, response);
 	    	
 	    }
@@ -721,7 +813,88 @@ public class ControlServlet extends HttpServlet {
 	    	
 	    	//viewBillMessages(request, response);
 	    }
-
+	    
+	    private void updateBill(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	int billID = currentBill;
+	    	double price = Double.parseDouble(request.getParameter("price"));
+	    	
+	    	bill bills = new bill(price, billID);
+	    	billDAO.updateBill(bills);
+	    	
+	    	sendResponseBill(request, response);
+	    }
+	    
+	    private void payBillConfirm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String email = currentUser;
+	    	
+	    	request.setAttribute("userInfo", userDAO.listUserInfo(email));
+	    	request.getRequestDispatcher("payBillConfirm.jsp").forward(request, response);;
+	    	
+	    }
+	    
+	    private void payBillEnd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String status = "Paid";
+	    	int billID = currentBill;	    	
+	    	billDAO.payBill(billID, status);
+	    	
+	    	request.getRequestDispatcher("activitypage.jsp").forward(request, response);
+	    	
+	    	
+	    }
+	    
+	    
+	    private void bigClients(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listUser", userDAO.BigClients());
+			
+	    	request.getRequestDispatcher("BigClients.jsp").forward(request, response);
+	    }
+	    
+	    private void easyClients(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listUser", userDAO.EasyClients());
+			
+	    	request.getRequestDispatcher("EasyClients.jsp").forward(request, response);
+	    }
+	    
+	    private void oneTreeQuotes(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listUserQuote", quoteDAO.oneTreeQuotes());
+			
+	    	request.getRequestDispatcher("oneTreeQuotes.jsp").forward(request, response);
+	    }
+	    
+	    private void prospectClients(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listUser", userDAO.ProspectClients());
+			
+	    	request.getRequestDispatcher("ProspectClients.jsp").forward(request, response);
+	    }
+	    
+	    private void highestTrees(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listTree", treeDAO.HighestTree());
+			
+	    	request.getRequestDispatcher("HighestTree.jsp").forward(request, response);
+	    }
+	    
+	    private void overdueBills(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listBill", billDAO.OverdueBills());
+			
+	    	request.getRequestDispatcher("OverdueBills.jsp").forward(request, response);
+	    }
+	    
+	    private void badClients(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listUser", userDAO.BadClients());
+			
+	    	request.getRequestDispatcher("BadClients.jsp").forward(request, response);
+	    }
+	    
+	    private void goodClients(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listUser", userDAO.GoodClients());
+			
+	    	request.getRequestDispatcher("GoodClients.jsp").forward(request, response);
+	    }
+	    
+	    private void stats(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+			request.setAttribute("listStats", statsDAO.Statistics());
+	    	request.getRequestDispatcher("Statistics.jsp").forward(request, response);
+	    }
 	    
 	    
 	    

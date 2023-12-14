@@ -69,6 +69,39 @@ public class userDAO
         return listUser;
     }
     
+    public List<user> listUserInfo(String email) throws SQLException {
+        List<user> listUser = new ArrayList<user>();        
+        String sql = "SELECT * FROM User where email = ?";   
+        
+        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+         
+        while (resultSet.next()) {
+           
+            String firstName = resultSet.getString("firstName");
+            String lastName = resultSet.getString("lastName");
+            String password = resultSet.getString("password");
+            String birthday = resultSet.getString("birthday");
+            String adress_street_num = resultSet.getString("adress_street_num"); 
+            String adress_street = resultSet.getString("adress_street"); 
+            String adress_city = resultSet.getString("adress_city"); 
+            String adress_state = resultSet.getString("adress_state"); 
+            String adress_zip_code = resultSet.getString("adress_zip_code"); 
+            String credit = resultSet.getString("credit");
+            String phone = resultSet.getString("phone");
+
+             
+            user users = new user(email,firstName, lastName, password, birthday, adress_street_num,  adress_street,  adress_city,  adress_state,  adress_zip_code, credit, phone);
+            listUser.add(users);
+            
+        }        
+        resultSet.close();
+        
+                
+        return listUser;
+    }
+    
     public void insert(user users) throws SQLException {
 		String sql = "insert into User(email, firstName, lastName, password, birthday,adress_street_num, adress_street,adress_city,adress_state,adress_zip_code,credit,phone) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -211,6 +244,127 @@ public class userDAO
     	return false;
     }
     
+    public List<user> BigClients() throws SQLException {
+        List<user> listUser = new ArrayList<user>();        
+        String sql = 
+        		"WITH clientRank AS ("
+        		+ "	Select "
+        		+ "		email, "
+        		+ "		RANK() OVER (ORDER BY COUNT(*) DESC) AS tree_amt_rank"
+        		+ " FROM "
+        		+ "		Bill "
+        		+ "	Group By "
+        		+ "		email"
+        		+ " )"
+        		
+        		+ "Select "
+        		+ "		email "
+        		+ "From "
+        		+ "		clientRank "
+        		+ "Where "
+        		+ "		tree_amt_rank=1; ";   
+        statement = (Statement) connect.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            String email = resultSet.getString("email");
+
+             
+            user users = new user(email);
+            listUser.add(users);
+            
+        }        
+        resultSet.close();
+        
+        return listUser;
+    }
+    
+    
+    public List<user> EasyClients() throws SQLException {
+        List<user> listUser = new ArrayList<user>();        
+        String sql = 
+        		"select email from User where email in \r\n"
+        		+ "(select email from qOrder where email NOT in \r\n"
+        		+ "(select email from NegotiateQuote));";   
+        statement = (Statement) connect.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            String email = resultSet.getString("email");
+
+             
+            user users = new user(email);
+            listUser.add(users);
+            
+        }        
+        resultSet.close();
+        
+        return listUser;
+    }
+    
+    public List<user> ProspectClients() throws SQLException {
+        List<user> listUser = new ArrayList<user>();        
+        String sql = 
+        		"Select email from User where email in \r\n"
+        		+ "(select email from Quote where email NOT in \r\n"
+        		+ "(select email from qOrder));";   
+        statement = (Statement) connect.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            String email = resultSet.getString("email");
+
+             
+            user users = new user(email);
+            listUser.add(users);
+            
+        }        
+        resultSet.close();
+        
+        return listUser;
+    }
+    
+    public List<user> BadClients() throws SQLException {
+        List<user> listUser = new ArrayList<user>();        
+        String sql = 
+        		"Select email from User where email in \r\n"
+        		+ "(select email from Bill where payDate IS NULL and date <= NOW() - INTERVAL 1 WEEK);";   
+        statement = (Statement) connect.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            String email = resultSet.getString("email");
+
+             
+            user users = new user(email);
+            listUser.add(users);
+            
+        }        
+        resultSet.close();
+        
+        return listUser;
+    }
+    
+    public List<user> GoodClients() throws SQLException {
+        List<user> listUser = new ArrayList<user>();        
+        String sql = 
+        		"Select email from User where email in \r\n"
+        		+ "(select email from Bill where payDate IS NOT NULL and TIMEDIFF(paydate, date) <= '24:00:00');";   
+        statement = (Statement) connect.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            String email = resultSet.getString("email");
+
+             
+            user users = new user(email);
+            listUser.add(users);
+            
+        }        
+        resultSet.close();
+        
+        return listUser;
+    }
     
     public void init() throws SQLException, FileNotFoundException, IOException{
     	

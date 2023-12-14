@@ -24,7 +24,7 @@
 	<input type = "submit" value = "Select Bill"/>
 	</form>
         <table border="1" cellpadding="6">
-            <caption><h2>List of Bills</h2></caption>
+            <caption><h2>List of Overdue Bills</h2></caption>
             <tr>
                 <th>ID</th>
                 <th># of Trees</th>
@@ -33,6 +33,7 @@
                 <th>End Date</th>
                 <th>Status</th>
                 <th>User Email</th>
+                <th>Date Posted</th>
             </tr>
             <c:forEach var="bills" items="${listBill}">
                 <tr style="text-align:center">
@@ -43,6 +44,7 @@
                     <td><c:out value="${bills.end_time}" /></td>
                     <td><c:out value="${bills.status}" /></td>
                     <td><c:out value="${bills.email}" /></td>
+                    <td><c:out value="${bills.date}" /></td>
 
                 </tr>
             </c:forEach>

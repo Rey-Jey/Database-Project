@@ -66,6 +66,7 @@ div {
 
 		</form>
 	</div>
+	<br>
 		 <a href="login.jsp"target ="_self" > logout</a>
 		 <p> You can find quotes you've made here.</p>
 		 </center>
