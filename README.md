@@ -23,6 +23,10 @@
 
 •	Open all .jsp files to run it on web browser
 
+•   In MySQL, create a user John with password: "john1234"
+
+•   In MySQL, create and use testdb for the database
+
 # THIS PROJECT STARTING FROM PART 1 WAS DONE SOLELY BY REY JAKOSALEM
 
 
